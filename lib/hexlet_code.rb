@@ -1,8 +1,17 @@
 # frozen_string_literal: true
 
-require_relative "hexlet_code/version"
+require_relative 'hexlet_code/version'
 
 module HexletCode
-  class Error < StandardError; end
-  # Your code goes here...
+  class Tag
+    def self.build(tag_name, options = {})
+      tag = options.reduce("<#{tag_name} ") do |acc, (key, value)|
+        acc + "#{key}=\"#{value}\" "
+      end
+      tag = "#{tag.strip}>"
+      tag += "#{yield}</#{tag_name}>" if block_given?
+
+      tag
+    end
+  end
 end
