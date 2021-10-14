@@ -1,0 +1,4 @@
+# .github/config/rubocop_linter_action.yml
+
+versions:
+  - rubocop
