@@ -15,7 +15,10 @@ module HexletCode
     end
   end
 
-  def form_for(model, url = nil)
-    # TODO: before write tests for form_for method
+  def self.form_for(_model, options = {})
+    url = options[:url] || '#'
+    form = Tag.build('form', action: url, method: 'post')
+
+    "#{form}</form>"
   end
 end
