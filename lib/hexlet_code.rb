@@ -14,4 +14,8 @@ module HexletCode
       tag
     end
   end
+
+  def form_for(model, url = nil)
+    # TODO: before write tests for form_for method
+  end
 end

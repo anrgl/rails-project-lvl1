@@ -8,7 +8,7 @@ RuboCop::RakeTask.new
 
 task default: :rubocop
 
-'Run unit tests'
+desc 'Run unit tests'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
   t.libs << 'test'
