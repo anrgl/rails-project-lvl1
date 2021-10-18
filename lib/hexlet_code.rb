@@ -15,10 +15,17 @@ module HexletCode
     end
   end
 
-  def self.form_for(_model, options = {})
+  def self.form_for(model, options = {})
     url = options[:url] || '#'
-    form = Tag.build('form', action: url, method: 'post')
+    method = options[:method] || 'post'
+    Tag.build('form', action: url, method: method) do
+      public_send(:input, :name, model) if block_given?
+    end
+  end
 
-    "#{form}</form>"
+  def self.input(arg, model, as: nil)
+    return "<textarea cols=\"20\" rows=\"40\" name=\"#{arg}\">#{model[arg]}</textarea>" if as
+
+    "<input name=\"#{arg}\" type=\"text\" value=\"#{model[arg]}\">"
   end
 end
