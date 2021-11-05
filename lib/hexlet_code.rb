@@ -54,15 +54,18 @@ module HexletCode
     "<form action=\"#{url}\" method=\"#{method}\">#{@inputs}</form>"
   end
 
+  def self.tag_helper(name, as, collection)
+    case as
+    when :input then Tag.build_label(name) + Tag.build_input(name, @model[name])
+    when :text then Tag.build_label(name) + Tag.build_textarea(name, @model[name])
+    when :select then Tag.build_label(name) + Tag.build_select(name, @model[name], collection)
+    else raise ArgumentError, "Wrong input type: '#{as}'"
+    end
+  end
+
   def self.input(name, as: :input, collection: [])
     return unless @model.members.include?(name)
 
-    case as
-    when :input then tag = Tag.build_label(name) + Tag.build_input(name, @model[name])
-    when :text then tag = Tag.build_label(name) + Tag.build_textarea(name, @model[name])
-    when :select then tag = Tag.build_label(name) + Tag.build_select(name, @model[name], collection)
-    else raise ArgumentError, "Wrong input type: '#{as}'"
-    end
-    @inputs += tag.to_s
+    @inputs += tag_helper(name, as, collection).to_s
   end
 end
