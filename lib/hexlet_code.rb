@@ -3,6 +3,8 @@
 require_relative 'hexlet_code/version'
 
 module HexletCode
+  class Error < StandardError; end
+
   attr :inputs, :model
 
   @inputs = ''
@@ -69,7 +71,7 @@ module HexletCode
   end
 
   def self.input(name, as: :input, collection: [], **attrs)
-    return unless @model.members.include?(name)
+    raise NoMethodError unless @model.members.include?(name)
 
     @inputs += tag_helper(name, as, collection, **attrs).to_s
   end
