@@ -3,6 +3,10 @@
 require_relative 'hexlet_code/version'
 
 module HexletCode
+  attr :inputs, :model
+
+  @inputs = ''
+  @model = nil
   class Tag
     def self.build(tag_name, options = {})
       tag = options.reduce("<#{tag_name} ") do |acc, (key, value)|
@@ -13,19 +17,52 @@ module HexletCode
 
       tag
     end
+
+    def self.build_input(name, value)
+      attrs = { type: 'text', name: name }
+      attrs[:value] = value if value
+      Tag.build('input', **attrs)
+    end
+
+    def self.build_textarea(name, value)
+      attrs = { cols: 20, rows: 40, name: name }
+      Tag.build('textarea', **attrs) { value }
+    end
+
+    def self.build_select(name, value, collection)
+      attrs = { name: name }
+      options = collection.map do |option|
+        option_attrs = { value: option }
+        option_attrs[:selected] = true if option == value
+        option_tag = Tag.build('option', **option_attrs) { option }
+        option_tag.to_s
+      end.join
+      Tag.build('select', **attrs) { options }
+    end
+
+    def self.build_label(name)
+      attrs = { for: name }
+      Tag.build('label', **attrs) { name.capitalize }
+    end
   end
 
   def self.form_for(model, options = {})
     url = options[:url] || '#'
     method = options[:method] || 'post'
-    Tag.build('form', action: url, method: method) do
-      public_send(:input, :name, model) if block_given?
-    end
+    @model = model
+    yield self
+    "<form action=\"#{url}\" method=\"#{method}\">#{@inputs}</form>"
   end
 
-  def self.input(arg, model, as: nil)
-    return "<textarea cols=\"20\" rows=\"40\" name=\"#{arg}\">#{model[arg]}</textarea>" if as
+  def self.input(name, as: :input, collection: [])
+    return unless @model.members.include?(name)
 
-    "<input name=\"#{arg}\" type=\"text\" value=\"#{model[arg]}\">"
+    case as
+    when :input then tag = Tag.build_label(name) + Tag.build_input(name, @model[name])
+    when :text then tag = Tag.build_label(name) + Tag.build_textarea(name, @model[name])
+    when :select then tag = Tag.build_label(name) + Tag.build_select(name, @model[name], collection)
+    else raise ArgumentError, "Wrong input type: '#{as}'"
+    end
+    @inputs += tag.to_s
   end
 end
