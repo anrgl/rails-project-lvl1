@@ -44,6 +44,11 @@ module HexletCode
       attrs = { for: name }
       Tag.build('label', **attrs) { name.capitalize }
     end
+
+    def self.build_submit(value, **attrs)
+      attrs_h = { name: 'commit', type: 'submit', value: value, **attrs }
+      Tag.build('input', **attrs_h)
+    end
   end
 
   def self.form_for(model, options = {})
@@ -67,5 +72,9 @@ module HexletCode
     return unless @model.members.include?(name)
 
     @inputs += tag_helper(name, as, collection, **attrs).to_s
+  end
+
+  def self.submit(value = 'Save', **attrs)
+    @inputs += Tag.build_submit(value, **attrs)
   end
 end

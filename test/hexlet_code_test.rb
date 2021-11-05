@@ -25,12 +25,14 @@ class HexletCodeTest < Minitest::Test
     result = HexletCode.form_for(user, url: '/user') do |f|
       f.input :name, class: 'form-name'
       f.input :job, as: :text, cols: 50, rows: 60
+      f.submit 'Wow'
     end
     assert_equal result, '<form action="/user" method="post">' \
                          '<label for="name">Name</label>' \
                          '<input type="text" name="name" class="form-name" value="John">' \
                          '<label for="job">Job</label>' \
                          '<textarea cols="50" rows="60" name="job">hexlet</textarea>' \
+                         '<input name="commit" type="submit" value="Wow">' \
                          '</form>'
   end
 end
