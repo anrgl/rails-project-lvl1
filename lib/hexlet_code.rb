@@ -18,26 +18,26 @@ module HexletCode
       tag
     end
 
-    def self.build_input(name, value)
-      attrs = { type: 'text', name: name }
-      attrs[:value] = value if value
-      Tag.build('input', **attrs)
+    def self.build_input(name, value, type: 'text', **attrs)
+      attrs_h = { type: type, name: name, **attrs }
+      attrs_h[:value] = value if value
+      Tag.build('input', **attrs_h)
     end
 
-    def self.build_textarea(name, value)
-      attrs = { cols: 20, rows: 40, name: name }
-      Tag.build('textarea', **attrs) { value }
+    def self.build_textarea(name, value, **attrs)
+      attrs_h = { cols: 20, rows: 40, name: name, **attrs }
+      Tag.build('textarea', **attrs_h) { value }
     end
 
-    def self.build_select(name, value, collection)
-      attrs = { name: name }
+    def self.build_select(name, value, collection = [], **attrs)
+      attrs_h = { name: name, **attrs }
       options = collection.map do |option|
         option_attrs = { value: option }
         option_attrs[:selected] = true if option == value
         option_tag = Tag.build('option', **option_attrs) { option }
         option_tag.to_s
       end.join
-      Tag.build('select', **attrs) { options }
+      Tag.build('select', **attrs_h) { options }
     end
 
     def self.build_label(name)
@@ -54,18 +54,18 @@ module HexletCode
     "<form action=\"#{url}\" method=\"#{method}\">#{@inputs}</form>"
   end
 
-  def self.tag_helper(name, as, collection)
+  def self.tag_helper(name, as, collection, **attrs)
     case as
-    when :input then Tag.build_label(name) + Tag.build_input(name, @model[name])
-    when :text then Tag.build_label(name) + Tag.build_textarea(name, @model[name])
-    when :select then Tag.build_label(name) + Tag.build_select(name, @model[name], collection)
+    when :input then Tag.build_label(name) + Tag.build_input(name, @model[name], **attrs)
+    when :text then Tag.build_label(name) + Tag.build_textarea(name, @model[name], **attrs)
+    when :select then Tag.build_label(name) + Tag.build_select(name, @model[name], collection, **attrs)
     else raise ArgumentError, "Wrong input type: '#{as}'"
     end
   end
 
-  def self.input(name, as: :input, collection: [])
+  def self.input(name, as: :input, collection: [], **attrs)
     return unless @model.members.include?(name)
 
-    @inputs += tag_helper(name, as, collection).to_s
+    @inputs += tag_helper(name, as, collection, **attrs).to_s
   end
 end
