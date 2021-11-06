@@ -9,7 +9,3 @@ Gemspec/RequiredRubyVersion:
 
 Metrics/MethodLength:
   Enabled: false
-
-Naming/MethodParameterName:
-  AllowedNames:
-    - as
